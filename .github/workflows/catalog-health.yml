@@ -20,16 +20,15 @@ jobs:
           set -euo pipefail
           html=$(curl -fsSL https://ziontechgroup.com/)
           must=(
-            "Catálogo vivo"
-            "Diagnóstico rápido"
-            "Telegram"
             "Discovery"
-            "CPA"
+            "Discovery $99"
             "Agentes"
-            "Ferramentas"
-            "Academia"
+            "Autonomous AI Agents"
+            "Plans"
+            "Managed IT"
             "FinOps"
-            "WhatsApp"
+            "Ver case studies"
+            "Consulting $499"
           )
           fail=0
           for s in "${must[@]}"; do
