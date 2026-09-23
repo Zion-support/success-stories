@@ -1,16 +1,10 @@
-# 🌐 Zion App Network — Interlinks
+# Zion Success Stories
 
-**success-stories** is part of the Zion Tech Group app network (630+ apps).
+Customer success stories.
 
-- 🗃️ [Master Index](https://github.com/Zion-support/zion-network/blob/main/APPS_NETWORK.md)
-- 🗂️ Category: [Content & Marketing](https://github.com/Zion-support/zion-network/blob/main/network/content-marketing.md)
+## Network
+- 📚 Master catalog: [zion-app-network/CATALOG.md](https://github.com/Zion-support/zion-app-network/blob/main/CATALOG.md)
+- Hubs: [zion-app-network](https://github.com/Zion-support/zion-app-network) · [zion-network](https://github.com/Zion-support/zion-network)
+- Sites: [blog](https://github.com/Zion-support/blog) · [case-studies](https://github.com/Zion-support/case-studies) · [partners](https://github.com/Zion-support/partners)
 
-## Related apps
-- [changelog-writer](https://github.com/Zion-support/changelog-writer) — changelog automation
-- [ai-social-manager](https://github.com/Zion-support/ai-social-manager) — social media management
-- [ai-recipe-generator](https://github.com/Zion-support/ai-recipe-generator) — content generation
-- [tools](https://github.com/Zion-support/tools) — AI tools hub
-- [zion-network](https://github.com/Zion-support/zion-network) — network hub
-
----
-🌐 [Network Index](https://github.com/Zion-support/zion-network/blob/main/APPS_NETWORK.md) · [Status](https://zion-support.github.io/zion-status/) · [Plans](https://zion-support.github.io/zion-plans/) · [Portal](https://zion-support.github.io/zion-portal/)
+*Zion Tech Group · [ziontechgroup.com](https://ziontechgroup.com)*
