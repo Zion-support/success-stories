@@ -21,14 +21,14 @@ jobs:
           html=$(curl -fsSL https://ziontechgroup.com/)
           must=(
             "Discovery"
-            "Discovery $99"
+            'Discovery $99'
             "Agentes"
             "Autonomous AI Agents"
             "Plans"
             "Managed IT"
             "FinOps"
             "Ver case studies"
-            "Consulting $499"
+            'Consulting $499'
           )
           fail=0
           for s in "${must[@]}"; do
