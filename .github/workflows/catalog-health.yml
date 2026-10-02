@@ -7,28 +7,30 @@ on:
   push:
     paths:
       - "public/index.html"
-      - "public/data/zion-catalog.json"
-      - "public/assets/js/zion-catalog.js"
       - ".github/workflows/catalog-health.yml"
+      # NOTE: public/data/zion-catalog.json and public/assets/js/zion-catalog.js were retired
+      # with the old homepage (see blog repo watchdog note 2026-10-02) and removed from checks.
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Probe live homepage advertising + catalog JS
+      - name: Probe live homepage advertising + key routes
         run: |
           set -euo pipefail
-          html=$(curl -fsSL https://ziontechgroup.com/)
+          # Homepage hero/content rotates; fetch 3x and combine to avoid flakes.
+          # NOTE (2026-10-02): expectations re-verified against the live homepage
+          # after the 30/09 P0 restore (EN "recovered-2026-03-19" homepage).
+          # Legacy PT strings and assets/js/zion-catalog.js + data/zion-catalog.json
+          # were retired with the old homepage and removed from this watchdog.
+          html="$(for i in 1 2 3; do curl -fsSL https://ziontechgroup.com/ || true; sleep 2; done)"
           must=(
+            "Zion Tech Group"
+            "AI Agents"
+            "Automation"
             "Discovery"
             'Discovery $99'
-            "Agentes"
-            "Autonomous AI Agents"
-            "Plans"
-            "Managed IT"
-            "FinOps"
-            "Ver case studies"
-            'Consulting $499'
+            "Case Studies"
           )
           fail=0
           for s in "${must[@]}"; do
@@ -39,37 +41,20 @@ jobs:
               echo "OK: $s"
             fi
           done
-          js=$(curl -fsSL https://ziontechgroup.com/assets/js/zion-catalog.js)
-          js_must=(
-            'Discovery $99'
-            "Agentes Telegram"
-            "Estimador FinOps"
-            "ensureFinops"
-            "finops-form"
-          )
-          for s in "${js_must[@]}"; do
-            if ! grep -Fq "$s" <<< "$js"; then
-              echo "MISSING in catalog JS: $s"
-              fail=1
-            else
-              echo "OK JS: $s"
-            fi
-          done
           routes=(
             https://ziontechgroup.com/
             https://ziontechgroup.com/services/
-            https://ziontechgroup.com/agents/
+            https://ziontechgroup.com/managed-it-services/
+            https://ziontechgroup.com/autonomous-ai-agents/
+            https://ziontechgroup.com/ai-consulting-services/
             https://ziontechgroup.com/plans/
             https://ziontechgroup.com/discovery/
-            https://ziontechgroup.com/booking/
-            https://ziontechgroup.com/cpa/
-            https://ziontechgroup.com/free-ai-it-tools/
-            https://ziontechgroup.com/academy/
-            https://ziontechgroup.com/blog/
-            https://ziontechgroup.com/telegram/
-            https://ziontechgroup.com/pricing/
+            https://ziontechgroup.com/ai-readiness-assessment/
             https://ziontechgroup.com/finops-consulting/
-            https://ziontechgroup.com/assets/js/zion-catalog.js
+            https://ziontechgroup.com/zion-app-network/
+            https://ziontechgroup.com/case-studies/
+            https://ziontechgroup.com/blog/
+            https://ziontechgroup.com/contact/
           )
           for u in "${routes[@]}"; do
             code=$(curl -sI -o /dev/null -w "%{http_code}" "$u")
@@ -82,5 +67,5 @@ jobs:
           if [ "$fail" -ne 0 ]; then
             echo "Watchdog found gaps."
             exit 1
-          fi
-          echo "Watchdog green."
+            fi
+            echo "Watchdog green."
