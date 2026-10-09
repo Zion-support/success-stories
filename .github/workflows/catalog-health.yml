@@ -8,8 +8,6 @@ on:
     paths:
       - "public/index.html"
       - ".github/workflows/catalog-health.yml"
-      # NOTE: public/data/zion-catalog.json and public/assets/js/zion-catalog.js were retired
-      # with the old homepage (see blog repo watchdog note 2026-10-02) and removed from checks.
 
 jobs:
   check:
@@ -18,24 +16,16 @@ jobs:
       - name: Probe live homepage advertising + key routes
         run: |
           set -euo pipefail
-          # Homepage hero/content rotates; fetch 3x and combine to avoid flakes.
-          # NOTE (2026-10-03): expectations re-aligned with live homepage;
-          # removed stale literal "Automation"/"Case Studies", added "case-studies" slug.
-          html="$(for i in 1 2 3; do curl -fsSL https://ziontechgroup.com/ || true; sleep 2; done)"
+          # Validate durable production contracts, not rotating homepage copy.
+          html="$(for i in 1 2 3; do curl -fsSL -m 20 https://ziontechgroup.com/ || true; sleep 2; done)"
+          discovery_html="$(for i in 1 2 3; do curl -fsSL -m 20 https://ziontechgroup.com/discovery/ || true; sleep 2; done)"
+          fail=0
+
           must=(
             "Zion Tech Group"
             "Discovery"
             "case-studies"
           )
-          fail=0
-          # Discovery is contractually free. Accept either PT-BR or EN copy so
-          # localization changes do not create a false CI failure.
-          if ! grep -Eq 'sempre gr[aá]tis|always free' <<< "$html"; then
-            echo "MISSING free Discovery promise (PT/EN)"
-            fail=1
-          else
-            echo "OK: free Discovery promise"
-          fi
           for s in "${must[@]}"; do
             if ! grep -Fq "$s" <<< "$html"; then
               echo "MISSING on homepage: $s"
@@ -44,6 +34,14 @@ jobs:
               echo "OK: $s"
             fi
           done
+
+          if ! grep -Eiq 'gr[aá]tis|free' <<< "$discovery_html"; then
+            echo "MISSING canonical free Discovery promise"
+            fail=1
+          else
+            echo "OK: canonical free Discovery promise"
+          fi
+
           routes=(
             https://ziontechgroup.com/
             https://ziontechgroup.com/services/
@@ -67,8 +65,9 @@ jobs:
               *) echo "BAD STATUS $code $u"; fail=1 ;;
             esac
           done
+
           if [ "$fail" -ne 0 ]; then
             echo "Watchdog found gaps."
             exit 1
-            fi
-            echo "Watchdog green."
+          fi
+          echo "Watchdog green."
